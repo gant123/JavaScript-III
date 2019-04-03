@@ -15,6 +15,24 @@
   * dimensions (These represent the character's size in the video game)
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
+function GameObject(obj) {
+  //properties
+  this.createdAt = new Date();
+  this.dimensions = obj.dimensions;
+}
+//methods
+GameObject.prototype.destroy = function() {
+  return `${this.name} was removed from the game.`;
+};
+
+let testGameObject = new GameObject({
+  dimensions: {
+    length: 2,
+    width: 1,
+    height: 1
+  }
+});
+
 
 /*
   === CharacterStats ===
@@ -22,6 +40,29 @@
   * takeDamage() // prototype method -> returns the string '<object name> took damage.'
   * should inherit destroy() from GameObject's prototype
 */
+function CharacterStats(obj) {
+  GameObject.call(this, obj);
+  //properties
+  this.hp = obj.hp;
+  this.name = obj.name;
+}
+
+//methods
+CharacterStats.prototype = Object.create(GameObject.prototype);
+CharacterStats.prototype.takeDamage = function() {
+  return `${this.name} took damage.`;
+};
+
+let testCharacter = new CharacterStats({
+  createdAt: new Date(),
+  dimensions: {
+    length: 2,
+    width: 1,
+    height: 1
+  },
+  hp: 5,
+  name: "Robert"
+});
 
 /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
@@ -32,6 +73,20 @@
   * should inherit destroy() from GameObject through CharacterStats
   * should inherit takeDamage() from CharacterStats
 */
+function Humanoid(obj) {
+  CharacterStats.call(this, obj);
+  //properties
+  this.faction = obj.faction;
+  this.weapons = obj.weapons;
+  this.language = obj.language;
+}
+
+//methods
+
+Humanoid.prototype = Object.create(CharacterStats.prototype);
+Humanoid.prototype.greet = function() {
+  return `${this.name} offers a greeting in ${this.language}. `;
+};
  
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
@@ -41,56 +96,56 @@
 
 // Test you work by un-commenting these 3 objects and the list of console logs below:
 
-/*
-  const mage = new Humanoid({
-    createdAt: new Date(),
-    dimensions: {
-      length: 2,
-      width: 1,
-      height: 1,
-    },
-    healthPoints: 5,
-    name: 'Bruce',
-    team: 'Mage Guild',
-    weapons: [
-      'Staff of Shamalama',
-    ],
-    language: 'Common Tongue',
-  });
 
-  const swordsman = new Humanoid({
-    createdAt: new Date(),
-    dimensions: {
-      length: 2,
-      width: 2,
-      height: 2,
-    },
-    healthPoints: 15,
-    name: 'Sir Mustachio',
-    team: 'The Round Table',
-    weapons: [
-      'Giant Sword',
-      'Shield',
-    ],
-    language: 'Common Tongue',
-  });
+  // const mage = new Humanoid({
+  //   createdAt: new Date(),
+  //   dimensions: {
+  //     length: 2,
+  //     width: 1,
+  //     height: 1,
+  //   },
+  //   healthPoints: 5,
+  //   name: 'Bruce',
+  //   team: 'Mage Guild',
+  //   weapons: [
+  //     'Staff of Shamalama',
+  //   ],
+  //   language: 'Common Tongue',
+  // });
 
-  const archer = new Humanoid({
-    createdAt: new Date(),
-    dimensions: {
-      length: 1,
-      width: 2,
-      height: 4,
-    },
-    healthPoints: 10,
-    name: 'Lilith',
-    team: 'Forest Kingdom',
-    weapons: [
-      'Bow',
-      'Dagger',
-    ],
-    language: 'Elvish',
-  });
+  // const swordsman = new Humanoid({
+  //   createdAt: new Date(),
+  //   dimensions: {
+  //     length: 2,
+  //     width: 2,
+  //     height: 2,
+  //   },
+  //   healthPoints: 15,
+  //   name: 'Sir Mustachio',
+  //   team: 'The Round Table',
+  //   weapons: [
+  //     'Giant Sword',
+  //     'Shield',
+  //   ],
+  //   language: 'Common Tongue',
+  // });
+
+  // const archer = new Humanoid({
+  //   createdAt: new Date(),
+  //   dimensions: {
+  //     length: 1,
+  //     width: 2,
+  //     height: 4,
+  //   },
+  //   healthPoints: 10,
+  //   name: 'Lilith',
+  //   team: 'Forest Kingdom',
+  //   weapons: [
+  //     'Bow',
+  //     'Dagger',
+  //   ],
+  //   language: 'Elvish',
+  // });
 
   console.log(mage.createdAt); // Today's date
   console.log(archer.dimensions); // { length: 1, width: 2, height: 4 }
@@ -102,9 +157,64 @@
   console.log(archer.greet()); // Lilith offers a greeting in Elvish.
   console.log(mage.takeDamage()); // Bruce took damage.
   console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
-*/
+
 
   // Stretch task: 
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
+  function Hero(obj) {
+    Humanoid.call(this, obj);
+    //properties
+  }
+  Hero.prototype = Object.create(Humanoid.prototype);
+  Hero.prototype.save = function() {
+    return `${this.name} has saved the day.`;
+  };
+  
+  function Villain(obj) {
+    Humanoid.call(this, obj);
+    //properties
+    this.scar = obj.scar;
+  }
+  Villain.prototype = Object.create(Humanoid.prototype);
+  
+  Villain.prototype.plot = function() {
+    hero.hp = hero.hp - 1;
+    return `${
+      this.name
+    } is plotting to attack the village. This reduces the hero health points.`;
+  };
+  
+  const hero = new Hero({
+    createdAt: new Date(),
+    dimensions: {
+      length: 2,
+      width: 2,
+      height: 2
+    },
+    hp: 15,
+    name: "Knight",
+    faction: "The Round Table",
+    weapons: ["Giant Sword", "Shield"],
+    language: "Common Toungue"
+  });
+  
+  const dragon = new Villain({
+    createdAt: new Date(),
+    dimensions: {
+      length: 2,
+      width: 2,
+      height: 2
+    },
+    hp: 15,
+    name: "Dragon",
+    faction: "The Round Table",
+    weapons: ["Giant Sword", "Shield"],
+    language: "Common Toungue",
+    scar: "Face scar"
+  });
+  
+  console.log(`${hero.name} has ${hero.hp} health points`);
+  console.log(dragon.plot());
+  console.log(`${hero.name} has ${hero.hp} health points`);
